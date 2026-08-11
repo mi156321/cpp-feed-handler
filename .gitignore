@@ -1,0 +1,13 @@
+build/
+*.o
+*.obj
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Proprietary KX headers/sources - do not commit, users must supply their own
+third_party/kdb/k.h
+third_party/kdb/k.c
+.claude/
