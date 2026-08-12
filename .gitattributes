@@ -1,0 +1,13 @@
+* text=auto eol=lf
+
+*.hpp text
+*.cpp text
+*.h text
+*.c text
+*.q text
+*.csv text
+*.md text
+CMakeLists.txt text
+
+*.png binary
+*.jpg binary
