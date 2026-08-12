@@ -1,13 +1,25 @@
 build/
+cmake-build-*/
 *.o
 *.obj
+*.a
+*.so
+*.dylib
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
 compile_commands.json
 
+# Binaries from ad-hoc compiles run directly in the repo root
+/feed_handler
+/test_normalize
+
 # Proprietary KX headers/sources - do not commit, users must supply their own
 third_party/kdb/k.h
 third_party/kdb/k.c
+
 .claude/
+.vscode/
+.idea/
+.DS_Store
