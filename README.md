@@ -1,5 +1,7 @@
 # feed_handler
 
+[![GitHub repo](https://img.shields.io/badge/GitHub-cpp--feed--handler-181717?logo=github)](https://github.com/mi156321/cpp-feed-handler)
+
 A C++ feed handler that normalizes raw exchange/vendor tick data into a
 single consistent schema and publishes it into a kdb+ tickerplant over IPC,
 using the official kdb+ C API (`k.h`/`k.c`).
