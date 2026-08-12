@@ -8,11 +8,16 @@
 // Demonstrates the feed-handler role: raw records from two differently
 // shaped exchange feeds are each run through their own normalizeSourceN,
 // then published through two sinks - the live tickerplant (or console
-// fallback) and curves.csv, which downstream bookSnapshot.q reads via
+// fallback) and a CSV in the schema downstream bookSnapshot.q reads via
 // ("SDTF"; enlist ",") 0: `:curves.csv.
+//
+// Written to curves_generated.csv rather than curves.csv: CsvCurvePublisher
+// appends on every run, and curves.csv in the repo root is committed
+// sample/seed data for bookSnapshot.q - writing straight to it would
+// silently grow a tracked fixture file on every run of this demo.
 int main() {
     auto publisher = makeDefaultPublisher("localhost", 5010, "user:password");
-    CsvCurvePublisher csvPublisher("curves.csv", todayUtcYmd());
+    CsvCurvePublisher csvPublisher("curves_generated.csv", todayUtcYmd());
 
     const std::vector<RawTickSourceA> rawA = {
         {"SWAP1", 52327500000LL, 12650.0},   // epoch ms, rate in bps

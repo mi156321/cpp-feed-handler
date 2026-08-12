@@ -15,6 +15,10 @@ compile_commands.json
 /feed_handler
 /test_normalize
 
+# Runtime output of feed_handler (see src/main.cpp) - distinct from the
+# committed curves.csv seed data, which must never be overwritten by a run
+/curves_generated.csv
+
 # Proprietary KX headers/sources - do not commit, users must supply their own
 third_party/kdb/k.h
 third_party/kdb/k.c

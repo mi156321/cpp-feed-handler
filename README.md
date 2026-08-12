@@ -31,12 +31,18 @@ which process (q or C++) published the row.
   sink. `ConsolePublisher` always works; `KdbTickerplantPublisher` sends
   real IPC `upd` messages via the kdb+ C API when built with `-DWITH_KDB=ON`.
 - `include/csv_curve_publisher.hpp` / `src/csv_curve_publisher.cpp` —
-  writes normalized curve ticks to `curves.csv` in the exact schema
+  appends normalized curve ticks to a CSV in the exact schema
   `bookSnapshot.q` reads via `("SDTF"; enlist ",") 0: `:curves.csv`
   (`sym,date,time,rate`, date as `YYYY-MM-DD`, time as `HH:MM:SS.mmm`).
 - `src/main.cpp` — demo wiring two raw sources through their normalizers
-  into both the tickerplant/console publisher and `curves.csv`.
+  into both the tickerplant/console publisher and `curves_generated.csv`.
 - `tests/test_normalize.cpp` — unit tests for the normalization logic.
+- `curves.csv` / `tradeLog.csv` — committed sample/seed data matching
+  `bookSnapshot.q`'s inline tables, so the q side is runnable standalone.
+  `CsvCurvePublisher` appends on every call and never truncates, so the
+  demo deliberately writes to the separate, gitignored
+  `curves_generated.csv` instead — running `feed_handler` repeatedly must
+  never silently grow this committed fixture file.
 
 ## Building without kdb+ (default)
 
@@ -46,7 +52,7 @@ stdout instead of publishing over IPC.
 ```sh
 cmake -S . -B build
 cmake --build build
-./build/feed_handler
+./build/feed_handler   # appends to curves_generated.csv, not curves.csv
 ctest --test-dir build
 ```
 
