@@ -1,7 +1,11 @@
 #include <cassert>
 #include <cmath>
+#include <cstdio>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
+#include "csv_curve_publisher.hpp"
 #include "source_normalizer.hpp"
 
 namespace {
@@ -49,12 +53,44 @@ void testParseSourceBLine() {
     assert(threw);
 }
 
+void testFormatTimeOfDay() {
+    assert(formatTimeOfDay(52327500000000LL) == "14:32:07.500");
+    assert(formatTimeOfDay(0) == "00:00:00.000");
+}
+
+void testCsvCurvePublisherSchema() {
+    const std::string path = "test_curves_tmp.csv";
+    std::remove(path.c_str());
+
+    {
+        CsvCurvePublisher pub(path, "2026-08-11");
+        pub.publish("curve", NormalizedTick{"SWAP1", 52327500000000LL, 1.265, "exchangeA"});
+        // Rows for other tables must be filtered out, not written.
+        pub.publish("tradeLog", NormalizedTick{"SWAP2", 0, 9.99, "exchangeA"});
+    }
+
+    std::ifstream in(path);
+    std::string header, row;
+    std::getline(in, header);
+    std::getline(in, row);
+    std::string extra;
+    const bool hasExtraRow = static_cast<bool>(std::getline(in, extra));
+    in.close();
+    std::remove(path.c_str());
+
+    assert(header == "sym,date,time,rate");
+    assert(row == "SWAP1,2026-08-11,14:32:07.500,1.265");
+    assert(!hasExtraRow);
+}
+
 } // namespace
 
 int main() {
     testNormalizeSourceA();
     testNormalizeSourceB();
     testParseSourceBLine();
+    testFormatTimeOfDay();
+    testCsvCurvePublisherSchema();
     std::cout << "all tests passed" << std::endl;
     return 0;
 }

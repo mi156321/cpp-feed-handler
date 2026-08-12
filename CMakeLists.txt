@@ -12,6 +12,7 @@ option(WITH_KDB "Build against the kdb+ C API for live tickerplant publishing" O
 add_library(normalizer
     src/source_normalizer.cpp
     src/tick_publisher.cpp
+    src/csv_curve_publisher.cpp
 )
 target_include_directories(normalizer PUBLIC include)
 

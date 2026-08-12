@@ -1,15 +1,18 @@
 #include <iostream>
 #include <vector>
 
+#include "csv_curve_publisher.hpp"
 #include "source_normalizer.hpp"
 #include "tick_publisher.hpp"
 
 // Demonstrates the feed-handler role: raw records from two differently
 // shaped exchange feeds are each run through their own normalizeSourceN,
-// then published through one common sink into the `curve` table -
-// downstream code never needs to know which exchange a row came from.
+// then published through two sinks - the live tickerplant (or console
+// fallback) and curves.csv, which downstream bookSnapshot.q reads via
+// ("SDTF"; enlist ",") 0: `:curves.csv.
 int main() {
     auto publisher = makeDefaultPublisher("localhost", 5010, "user:password");
+    CsvCurvePublisher csvPublisher("curves.csv", todayUtcYmd());
 
     const std::vector<RawTickSourceA> rawA = {
         {"SWAP1", 52327500000LL, 12650.0},   // epoch ms, rate in bps
@@ -22,12 +25,16 @@ int main() {
     };
 
     for (const auto& raw : rawA) {
-        publisher->publish("curve", normalizeSourceA(raw));
+        NormalizedTick tick = normalizeSourceA(raw);
+        publisher->publish("curve", tick);
+        csvPublisher.publish("curve", tick);
     }
 
     for (const auto& line : rawBLines) {
         try {
-            publisher->publish("curve", normalizeSourceB(parseSourceBLine(line)));
+            NormalizedTick tick = normalizeSourceB(parseSourceBLine(line));
+            publisher->publish("curve", tick);
+            csvPublisher.publish("curve", tick);
         } catch (const std::invalid_argument& e) {
             std::cerr << "skipping malformed source B record: " << e.what() << std::endl;
         }

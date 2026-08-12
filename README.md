@@ -27,8 +27,12 @@ which process (q or C++) published the row.
 - `include/tick_publisher.hpp` / `src/tick_publisher.cpp` — publishing
   sink. `ConsolePublisher` always works; `KdbTickerplantPublisher` sends
   real IPC `upd` messages via the kdb+ C API when built with `-DWITH_KDB=ON`.
+- `include/csv_curve_publisher.hpp` / `src/csv_curve_publisher.cpp` —
+  writes normalized curve ticks to `curves.csv` in the exact schema
+  `bookSnapshot.q` reads via `("SDTF"; enlist ",") 0: `:curves.csv`
+  (`sym,date,time,rate`, date as `YYYY-MM-DD`, time as `HH:MM:SS.mmm`).
 - `src/main.cpp` — demo wiring two raw sources through their normalizers
-  into one publisher.
+  into both the tickerplant/console publisher and `curves.csv`.
 - `tests/test_normalize.cpp` — unit tests for the normalization logic.
 
 ## Building without kdb+ (default)
