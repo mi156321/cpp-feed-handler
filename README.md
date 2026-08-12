@@ -18,7 +18,11 @@ Exchange/vendor raw feed (binary/FIX)
 
 Downstream q code (tickerplant, RDB/HDB, as-of-join analytics) only ever
 sees one schema — sym/time/rate/source — regardless of which raw source or
-which process (q or C++) published the row.
+which process (q or C++) published the row. See
+[q-book-snapshot](https://github.com/mi156321/q-book-snapshot) for the
+downstream kdb+/q half of the pipeline — it reads `curves.csv` in exactly
+the schema this feed handler writes and as-of joins it against trade
+positions for point-in-time mark-to-market snapshots.
 
 ## Layout
 
